@@ -20,4 +20,8 @@ public class UserManager {
 
         return UserMapper.INSTANCE.toUserDTO(user);
     }
+
+    public void save(UserDTO userDTO){
+        userRepo.save(UserMapper.INSTANCE.toUser(userDTO));
+    }
 }
