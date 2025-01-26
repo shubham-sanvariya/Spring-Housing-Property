@@ -6,6 +6,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -19,16 +20,25 @@ public class JwtUtility {
     @Value("${security.jwt.expiration-time}")
     private long EXPIRATION_TIME;
 
-    private Key key(){
+    private Key key() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
     }
 
-    public String generateToken(String email){
+    public String generateToken(String email) {
         return Jwts.builder()
-                    .setSubject(email)
-                    .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() * EXPIRATION_TIME))
-                    .signWith(key(),SignatureAlgorithm.HS256)
-                    .compact();
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() * EXPIRATION_TIME))
+                .signWith(key(), SignatureAlgorithm.HS256)
+                .compact();
     }
+
+    public Claims getClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
 }
