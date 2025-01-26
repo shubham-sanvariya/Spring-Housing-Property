@@ -47,4 +47,8 @@ public class JwtUtility {
         return expirationDate.before(new Date());
     }
 
+    public String extractEmail(String token){
+        return getClaims(token).getSubject();
+    }
+
 }
