@@ -41,4 +41,10 @@ public class JwtUtility {
                 .getBody();
     }
 
+    private boolean isTokenExpired(String token) {
+        Claims claims = getClaims(token);
+        Date expirationDate = claims.getExpiration();
+        return expirationDate.before(new Date());
+    }
+
 }
