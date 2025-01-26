@@ -51,4 +51,9 @@ public class JwtUtility {
         return getClaims(token).getSubject();
     }
 
+    public boolean validateToken(String token, String email){
+        String tokenEmail = extractEmail(token);
+        return email.equals(tokenEmail) && !isTokenExpired(token);
+    }
+
 }
