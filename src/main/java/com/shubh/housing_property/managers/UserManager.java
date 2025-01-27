@@ -18,7 +18,7 @@ public class UserManager {
     public UserDTO getByEmail(String email){
         User user = userRepo.findByEmail(email).orElse(null);
 
-        return UserMapper.INSTANCE.toUserDTO(user);
+        return user != null ? UserMapper.INSTANCE.toUserDTO(user) : null;
     }
 
     public void save(UserDTO userDTO){
