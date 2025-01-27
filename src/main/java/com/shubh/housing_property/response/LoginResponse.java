@@ -1,12 +1,15 @@
 package com.shubh.housing_property.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class LoginResponse extends BaseResponse{
     private String token;
+
+    public LoginResponse(int statusCode, String message, String token) {
+        super(statusCode, message);
+        this.token = token;
+    }
 }
