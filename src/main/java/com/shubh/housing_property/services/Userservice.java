@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.shubh.housing_property.dtos.UserDTO;
 import com.shubh.housing_property.managers.UserManager;
-import com.shubh.housing_property.mappers.UserMapper;
 import com.shubh.housing_property.request.LoginRequest;
 import com.shubh.housing_property.request.UserRequest;
 import com.shubh.housing_property.response.BaseResponse;
@@ -23,13 +22,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class Userservice {
 
-    private UserManager userManager;
+    private final UserManager userManager;
 
-    private EmailUtility emailUtility;
+    private final EmailUtility emailUtility;
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    private JwtUtility jwtUtility;
+    private final JwtUtility jwtUtility;
 
     public BaseResponse signup(UserRequest userRequest) {
         UserDTO userDTO = userManager.getByEmail(userRequest.getEmail());
@@ -38,14 +37,23 @@ public class Userservice {
             throw new IllegalArgumentException("Email is already registered.");
         }
 
-        userDTO = UserMapper.INSTANCE.toUserDTO(userRequest);
+        userDTO = new UserDTO();
+        userDTO.setName(userRequest.getName());
+        userDTO.setEmail(userRequest.getEmail());
         userDTO.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        userDTO.setPhone(userRequest.getPhone());
+        userDTO.setVerified(false);
 
         String otp = String.valueOf(new Random().nextInt(9000) + 1000);
         userDTO.setOtp(otp);
         userDTO.setOtpGeneratedTime(LocalDateTime.now());
 
-        userManager.save(userDTO);
+        
+        try {
+            userManager.save(userDTO);
+        } catch (Exception e) {
+            return new BaseResponse(500, e.getMessage());
+        }
 
         emailUtility.sendEmail(userDTO.getEmail(), "Email Verification", "Your OTP is: " + otp);
 

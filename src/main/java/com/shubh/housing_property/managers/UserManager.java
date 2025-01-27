@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserManager {
 
-    private UserRepo userRepo;
+    private final UserRepo userRepo;
 
     public UserDTO getByEmail(String email){
         User user = userRepo.findByEmail(email).orElse(null);
